@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kubernetes-dashboard-prod
+  namespace: kubernetes-dashboard
+  labels:
+    k8s-app: kubernetes-dashboard
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/auth-signin: https://dashboard.ironlab.dev/oauth2/start
+    nginx.ingress.kubernetes.io/auth-url: https://dashboard.ironlab.dev/oauth2/auth
+spec:
+  tls:
+  - hosts:
+    - dashboard.ironlab.dev
+    secretName: dashboard-prod
+  rules:
+  - host: dashboard.ironlab.dev
+    http:
+      paths:
+      - backend:
+          serviceName: kubernetes-dashboard
+          servicePort: 443
